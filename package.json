@@ -1,0 +1,77 @@
+{
+	"$schema": "https://www.raycast.com/schemas/extension.json",
+	"name": "vault",
+	"title": "Vault",
+	"description": "Load and manage your vault accounts",
+	"icon": "command-icon.png",
+	"author": "emiljohansson",
+	"license": "MIT",
+	"preferences": [
+		{
+			"name": "supabaseUrl",
+			"type": "textfield",
+			"title": "Supabase URL",
+			"description": "The URL of your Supabase project. You can find this in the Settings page of your Supabase project.",
+			"required": true
+		},
+		{
+			"name": "supabaseKey",
+			"title": "Supabase Key",
+			"description": "The API key of your Supabase project. You can find this in the Settings page of your Supabase project.",
+			"type": "textfield",
+			"default": "",
+			"required": true
+		},
+		{
+			"name": "userKey",
+			"title": "User Key",
+			"description": "The user key of your account.",
+			"type": "textfield",
+			"default": "",
+			"required": true
+		}
+	],
+	"commands": [
+		{
+			"name": "accounts",
+			"title": "Accounts",
+			"description": "Show all accounts",
+			"mode": "view"
+		},
+		{
+			"name": "login",
+			"title": "Login",
+			"description": "Login to supabase",
+			"mode": "view"
+		},
+		{
+			"name": "logout",
+			"title": "Log out",
+			"description": "Log out of supabase",
+			"mode": "view"
+		}
+	],
+	"dependencies": {
+		"@raycast/api": "1.64.4",
+		"@raycast/utils": "1.10.1",
+		"@supabase/supabase-js": "2.39.2",
+		"crypto-js": "4.2.0",
+		"got": "14.0.0"
+	},
+	"devDependencies": {
+		"@raycast/eslint-config": "1.0.6",
+		"@types/crypto-js": "4.2.1",
+		"@types/node": "20.8.10",
+		"@types/react": "18.2.27",
+		"eslint": "8.51.0",
+		"prettier": "3.0.3",
+		"typescript": "5.2.2"
+	},
+	"scripts": {
+		"build": "ray build -e dist",
+		"dev": "ray develop",
+		"fix-lint": "ray lint --fix",
+		"lint": "ray lint",
+		"publish": "npx @raycast/api@latest publish"
+	}
+}
