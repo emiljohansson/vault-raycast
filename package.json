@@ -21,14 +21,6 @@
 			"type": "textfield",
 			"default": "",
 			"required": true
-		},
-		{
-			"name": "userKey",
-			"title": "User Key",
-			"description": "The user key of your account.",
-			"type": "textfield",
-			"default": "",
-			"required": true
 		}
 	],
 	"commands": [
@@ -48,6 +40,12 @@
 			"name": "logout",
 			"title": "Log out",
 			"description": "Log out of supabase",
+			"mode": "view"
+		},
+		{
+			"name": "setKey",
+			"title": "Set key",
+			"description": "Set the master key",
 			"mode": "view"
 		}
 	],

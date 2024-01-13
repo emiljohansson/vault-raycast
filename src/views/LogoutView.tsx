@@ -1,4 +1,4 @@
-import { Detail, Toast, showToast } from '@raycast/api'
+import { Detail, LocalStorage, Toast, showToast } from '@raycast/api'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
@@ -12,6 +12,7 @@ export default function LogoutView() {
 				title: 'Logging out…',
 			})
 			const { error } = await supabase.auth.signOut()
+			await LocalStorage.removeItem('vault_master_key')
 			setIsLoading(false)
 			if (error) {
 				toast.style = Toast.Style.Failure

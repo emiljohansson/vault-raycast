@@ -1,11 +1,10 @@
-import { Action, ActionPanel, Detail, getPreferenceValues } from '@raycast/api'
+import { Action, ActionPanel, Detail } from '@raycast/api'
 import { useFetch } from '@raycast/utils'
 import { useState } from 'react'
-import { Account } from '../lib/supabase'
+import { Account, supabase } from '../lib/supabase'
 import { Session } from '@supabase/supabase-js'
 import { AES, enc } from 'crypto-js'
-
-const { userKey } = getPreferenceValues()
+import { useMasterKey } from '~/lib/hooks'
 
 export default function AccountView({
 	account,
@@ -15,6 +14,7 @@ export default function AccountView({
 	session: Session
 }) {
 	const [decryptedPassword, setDecryptedPassword] = useState('')
+	const masterKey = useMasterKey()
 
 	const { isLoading } = useFetch<{
 		data: string
@@ -29,9 +29,26 @@ export default function AccountView({
 			password: account.password,
 		}),
 		onData: async (data) => {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser()
+			if (!user) {
+				return
+			}
+			const { data: accountData } = await supabase
+				.from('account')
+				.select('salt')
+				.eq('user_id', user.id)
+				.eq('password', account.password)
+				.single()
+
+			if (!accountData?.salt) {
+				return
+			}
+
 			const step3 = data.data
 			const step2 = AES.decrypt(step3, session.user.id).toString(enc.Utf8)
-			const step1 = AES.decrypt(step2, userKey).toString(enc.Utf8)
+			const step1 = decryptPassword(masterKey, step2, accountData.salt)
 			setDecryptedPassword(step1 || 'Failed to decrypt')
 		},
 	})
@@ -50,4 +67,18 @@ export default function AccountView({
 			}
 		/>
 	)
+}
+
+export function decryptPassword(
+	masterKey: string,
+	encryptedPassword: string,
+	salt: string,
+) {
+	const encryptionKey = decryptWithKey(salt, masterKey)
+	const plaintextPassword = decryptWithKey(encryptedPassword, encryptionKey)
+	return plaintextPassword
+}
+
+function decryptWithKey(ciphertext: string, key: string) {
+	return AES.decrypt(ciphertext, key).toString(enc.Utf8)
 }
